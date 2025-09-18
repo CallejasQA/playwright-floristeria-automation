@@ -38,6 +38,50 @@ export class CarritoPage {
     const subtotalLocator = this.page.locator('.cart-subtotal .amount, .order-total .amount').first();
     return (await subtotalLocator.textContent() ?? '').trim();
   }
+    itemsLocator() {
+    return this.page.locator('.cart_item, .woocommerce-cart-form__cart-item');
+  }
+  async getNombreProductoPorIndice(index: number): Promise<string> {
+  const item = this.itemsLocator().nth(index);
+  return (await item.locator('a, .product-name, .name, .product-title').first().innerText().catch(() => '')).trim();
+}
+
+async getPrecioProductoPorIndice(index: number): Promise<string> {
+  const item = this.itemsLocator().nth(index);
+  return (await item.locator('.amount, .product-price, .price, .woocommerce-Price-amount').first().innerText().catch(() => '')).trim();
+}
+/** Devuelve todos los nombres de productos en el carrito */
+  async getProductosEnCarrito(): Promise<string[]> {
+    const items = this.itemsLocator();
+    const count = await items.count();
+    const nombres: string[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const nombre = await items
+        .nth(i)
+        .locator('a, .product-name, .name, .product-title')
+        .first()
+        .innerText()
+        .catch(() => '');
+      nombres.push(nombre.trim());
+    }
+
+    return nombres;
+  }
+
+  /** Elimina un producto del carrito por su índice */
+  async eliminarProductoPorIndice(index: number): Promise<void> {
+    const removeButtons = this.page.locator('.remove, .product-remove a');
+    const total = await removeButtons.count();
+
+    if (index < total) {
+      await removeButtons.nth(index).click();
+      await this.page.waitForLoadState('domcontentloaded');
+    } else {
+      throw new Error(`No existe un producto en la posición ${index}`);
+    }
+  }
+
 }
 
 

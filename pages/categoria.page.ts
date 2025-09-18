@@ -38,6 +38,11 @@ export class CategoriaPage {
     await link.click();
     await this.page.waitForLoadState('domcontentloaded');
   }
+  // Alias en español
+async seleccionarProductoPorIndice(index: number): Promise<void> {
+  return this.abrirProductoPorIndice(index);
+}
+
 }
 
 

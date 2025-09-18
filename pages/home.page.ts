@@ -31,4 +31,9 @@ export class HomePage {
     await expect(texto).toBeVisible();
     await texto.click();
   }
+  // Alias en español (compatibilidad)
+async irACategoria(nombreCategoria: string): Promise<void> {
+  return this.goToCategoria(nombreCategoria);
+}
+
 }
